@@ -25,8 +25,13 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#FF4444',
+					foreground: '#FFFFFF'
+				},
+				sushi: {
+					red: '#FF4444',
+					dark: '#2D2D2D',
+					gray: '#F8F8F8'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
