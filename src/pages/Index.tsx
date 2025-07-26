@@ -6,9 +6,22 @@ import { useState } from 'react';
 
 const Index = () => {
   const [cartItems, setCartItems] = useState(0);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
   
   const addToCart = () => {
     setCartItems(prev => prev + 1);
+  };
+  
+  const toggleFavorite = (itemId: number) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(itemId)) {
+        newFavorites.delete(itemId);
+      } else {
+        newFavorites.add(itemId);
+      }
+      return newFavorites;
+    });
   };
   
   const menuItems = [
@@ -121,6 +134,18 @@ const Index = () => {
                     className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+                    onClick={() => toggleFavorite(item.id)}
+                  >
+                    <Icon 
+                      name="Heart" 
+                      size={16} 
+                      className={`transition-colors ${favorites.has(item.id) ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-500'}`} 
+                    />
+                  </Button>
                   {item.popular && (
                     <Badge className="absolute top-4 left-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold shadow-lg">
                       🔥 Хит продаж
@@ -189,47 +214,131 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-gray-900 to-slate-800 text-white py-16">
+      {/* Reviews Section */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Отзывы наших гостей</h3>
+            <p className="text-gray-600 text-lg">Что говорят о нас клиенты</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: "Анна К.", rating: 5, text: "Лучшие роллы в городе! Быстрая доставка и всегда свежие продукты." },
+              { name: "Дмитрий П.", rating: 5, text: "Заказываю уже полгода. Качество всегда на высоте, рекомендую!" },
+              { name: "Мария С.", rating: 5, text: "Очень вкусно и красиво оформлено. Курьер всегда приезжает вовремя." }
+            ].map((review, index) => (
+              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+                <div className="flex justify-center mb-4">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Icon key={i} name="Star" size={20} className="text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 italic">"{review.text}"</p>
+                <h4 className="font-semibold text-gray-900">{review.name}</h4>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact & Hours Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-50 to-orange-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
-              <h5 className="text-lg font-semibold mb-4">Контакты</h5>
-              <div className="space-y-2 text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <Icon name="Phone" size={16} />
-                  <span>+7 (495) 123-45-67</span>
+              <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Контакты</h3>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Icon name="Phone" size={20} className="text-orange-500" />
+                  <span className="text-lg">+7 (999) 123-45-67</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Icon name="MapPin" size={16} />
-                  <span>Москва, ул. Примерная, 123</span>
+                <div className="flex items-center space-x-3">
+                  <Icon name="MapPin" size={20} className="text-orange-500" />
+                  <span className="text-lg">ул. Пушкина, д. 10, Москва</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Icon name="Clock" size={16} />
-                  <span>Работаем: 10:00 - 23:00</span>
+                <div className="flex items-center space-x-3">
+                  <Icon name="Mail" size={20} className="text-orange-500" />
+                  <span className="text-lg">info@sushidelivery.ru</span>
                 </div>
               </div>
             </div>
             <div>
-              <h5 className="text-lg font-semibold mb-4">Меню</h5>
-              <div className="space-y-2 text-gray-300">
-                <p>Роллы и суши</p>
-                <p>Горячие роллы</p>
-                <p>Сеты</p>
-                <p>Напитки</p>
+              <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Время работы</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Понедельник - Четверг</span>
+                  <span className="font-semibold">11:00 - 23:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Пятница - Суббота</span>
+                  <span className="font-semibold">11:00 - 01:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Воскресенье</span>
+                  <span className="font-semibold">12:00 - 22:00</span>
+                </div>
               </div>
-            </div>
-            <div>
-              <h5 className="text-lg font-semibold mb-4">Социальные сети</h5>
-              <div className="flex space-x-4">
-                <Icon name="Instagram" size={24} className="text-gray-300 hover:text-white cursor-pointer" />
-                <Icon name="Phone" size={24} className="text-gray-300 hover:text-white cursor-pointer" />
-                <Icon name="MessageCircle" size={24} className="text-gray-300 hover:text-white cursor-pointer" />
+              <div className="mt-6 p-4 bg-green-50 border-l-4 border-green-400 rounded">
+                <div className="flex items-center">
+                  <Icon name="Clock" size={16} className="text-green-600 mr-2" />
+                  <span className="text-green-800 font-semibold">Сейчас открыто</span>
+                </div>
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Sushi Delivery. Все права защищены.</p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-gray-900 to-slate-800 text-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-xl">🍣</span>
+                </div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">SUSHI DELIVERY</h1>
+              </div>
+              <p className="text-gray-400">Лучшая доставка суши и роллов в городе</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-white">Меню</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Роллы</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Суши</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Сеты</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Напитки</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-white">Информация</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-orange-400 transition-colors">О нас</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Доставка</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Оплата</a></li>
+                <li><a href="#" className="hover:text-orange-400 transition-colors">Контакты</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4 text-white">Следите за нами</h4>
+              <div className="flex space-x-3">
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-400 hover:text-white hover:border-orange-400">
+                  <Icon name="Instagram" size={16} />
+                </Button>
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-400 hover:text-white hover:border-orange-400">
+                  <Icon name="Phone" size={16} />
+                </Button>
+                <Button size="sm" variant="outline" className="border-gray-600 text-gray-400 hover:text-white hover:border-orange-400">
+                  <Icon name="Mail" size={16} />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 pt-8">
+            <div className="text-center">
+              <p className="text-gray-400">&copy; 2024 SUSHI DELIVERY. Все права защищены.</p>
+            </div>
           </div>
         </div>
       </footer>
